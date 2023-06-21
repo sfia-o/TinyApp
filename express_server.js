@@ -11,6 +11,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//route to root
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -36,12 +37,18 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+//route to longURL through the shortURL
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL].longURL;
+  res.redirect(longURL);
+});
+
 //post to /urls
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
-  const id = generateRandomString();
-  urlDatabase[id] = longURL
-  res.redirect(`/urls/${id}`);
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.listen(PORT, () => {

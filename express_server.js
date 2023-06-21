@@ -32,15 +32,9 @@ app.get("/urls/new", (req, res) => {
 })
 
 //route to urls_show
-app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { id: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
-});
-
-//route to longURL through the shortURL
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
 });
 
 //post to /urls
@@ -49,6 +43,12 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL
   res.redirect(`/urls/${shortURL}`);
+});
+
+//route to longURL through the shortURL
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {

@@ -38,8 +38,7 @@ app.get("/urls/:id", (req, res) => {
 
 //post to /urls
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${id}`);
 });
 
 app.listen(PORT, () => {
@@ -47,12 +46,11 @@ app.listen(PORT, () => {
 });
 
 //get shortURL
-function generateRandomString(longURL) {
-  let randomNum = Math.random()*9;
-  let characters = longURL.replace(/[^a-zA-Z]/g, randomNum);
+function generateRandomString() {
+  let characters = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
   let shortURL = '';
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i <= 6; i++) {
     let randomChar = Math.floor(Math.random()*characters.length);
     shortURL += characters.charAt(randomChar);
   }

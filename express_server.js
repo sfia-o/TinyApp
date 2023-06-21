@@ -17,10 +17,17 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//route to urls_index
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase};
   res.render("urls_index", templateVars)
-})
+});
+
+//route to urls_show
+app.get("/urls/:id", (req, res) => {
+  const templateVars = { id: req.params.id, longURL:};
+  res.render("urls_show", templateVars);
+});
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");

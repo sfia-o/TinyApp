@@ -51,6 +51,12 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//remove url resource
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect("/urls");
+})
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -60,7 +66,7 @@ function generateRandomString() {
   let characters = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
   let shortURL = '';
 
-  for (let i = 0; i <= 6; i++) {
+  for (let i = 0; i < 6; i++) {
     let randomChar = Math.floor(Math.random()*characters.length);
     shortURL += characters.charAt(randomChar);
   }

@@ -42,8 +42,21 @@ app.post("/urls", (req, res) => {
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
-
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+//get shortURL
+function generateRandomString(longURL) {
+  let randomNum = Math.random()*9;
+  let characters = longURL.replace(/[^a-zA-Z]/g, randomNum);
+  let shortURL = '';
+
+  for (let i = 0; i < 6; i++) {
+    let randomChar = Math.floor(Math.random()*characters.length);
+    shortURL += characters.charAt(randomChar);
+  }
+
+  return shortURL
+
+};

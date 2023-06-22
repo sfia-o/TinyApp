@@ -106,6 +106,7 @@ app.post("/urls/:shortURL/submit", (req, res) => {
 })
 
 //Route to longURL through the shortURL
+//Not working for updated links
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);

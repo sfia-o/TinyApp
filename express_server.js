@@ -1,15 +1,41 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
+
+
+/**
+ *  M I D D L E W A R E-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
 
 app.set('view engine', 'ejs');
-
 app.use(express.urlencoded({ extended: true }));
+
+
+/**
+ *  D A T A -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+//get shortURL
+function generateRandomString() {
+  let characters = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  let shortURL = '';
+
+  for (let i = 0; i < 6; i++) {
+    let randomChar = Math.floor(Math.random()*characters.length);
+    shortURL += characters.charAt(randomChar);
+  }
+  return shortURL
+};
+
+
+/**
+ *  ??   R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
 
 //route to root
 app.get("/", (req, res) => {
@@ -19,6 +45,12 @@ app.get("/", (req, res) => {
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
+
+
+/**
+ *  R E N D E R   R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
+
 
 //route to urls_index
 app.get("/urls", (req, res) => {
@@ -36,6 +68,11 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { id: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
+
+
+/**
+ *  A P I   R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
 
 //post to /urls
 app.post("/urls", (req, res) => {
@@ -63,7 +100,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 })
 
-// //update resource
+//update resource
 app.post("/urls/:shortURL/submit", (req, res) => {
   const shortURL = req.params.shortURL;
   const newURL = req.body.newURL;
@@ -71,19 +108,16 @@ app.post("/urls/:shortURL/submit", (req, res) => {
   res.redirect("/urls");
 })
 
+
+/**
+ *  L I S T E N -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-//get shortURL
-function generateRandomString() {
-  let characters = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  let shortURL = '';
 
-  for (let i = 0; i < 6; i++) {
-    let randomChar = Math.floor(Math.random()*characters.length);
-    shortURL += characters.charAt(randomChar);
-  }
-  return shortURL
-};
+
+
 

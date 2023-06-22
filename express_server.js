@@ -65,7 +65,9 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 
 // //update resource
 app.post("/urls/:shortURL/submit", (req, res) => {
-    
+  const shortURL = req.params.shortURL;
+  const newURL = req.body.newURL;
+  urlDatabase[shortURL] = newURL; 
   res.redirect("/urls");
 })
 

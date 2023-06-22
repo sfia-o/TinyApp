@@ -26,22 +26,19 @@
           name="username"
           style="width: 200px; margin: 1em"
         />
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>  
         
-        <button type="submit" class="btn btn-primary">Login</button>
-
         <% } else { %>
 
-        <form class="form-inline" action="/urls" method="GET">
+        <form class="form-inline" action="/logout" method="POST">
           <h5>Logged in as: <%= username %></h5>
+          <button type="submit" class="btn btn-primary">Logout</button>
         </form>
-
-        <button type="submit" class="btn btn-primary">Logout</button>
 
         <% } %>
 
         
-
-        </form>  
       </div>
     </div>
   </nav>

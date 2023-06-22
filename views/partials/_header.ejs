@@ -17,13 +17,17 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
 
-        <form class="form-inline text-right" action="/login" method="POST">
+        <form class="form-inline" action="/login" method="POST">
           <input
-          class="form-control"
+          class="form"
           type="text"
           name="username"
           style="width: 200px; margin: 1em"
         />
+
+        <form class="form-inline" action="/urls" method="GET">
+          <h5>Logged in as: <%= username></h5>
+        </form>
 
         <button type="submit" class="btn btn-primary">Login</button>
 

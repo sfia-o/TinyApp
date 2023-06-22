@@ -63,6 +63,12 @@ app.post("/urls/:shortURL/edit", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 })
 
+// //update resource
+app.post("/urls/:shortURL/submit", (req, res) => {
+    
+  res.redirect("/urls");
+})
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

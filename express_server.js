@@ -112,6 +112,14 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//Login Route
+
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username);
+  res.redirect("/urls")
+})
+
 
 /**
  *  L I S T E N -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

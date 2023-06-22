@@ -1,5 +1,5 @@
 const express = require("express");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -10,7 +10,7 @@ const PORT = 8080;
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
+app.use(cookieParser());
 
 
 /**
@@ -24,15 +24,15 @@ const urlDatabase = {
 
 //get shortURL
 function generateRandomString() {
-  let characters = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  let characters = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let shortURL = '';
 
   for (let i = 0; i < 6; i++) {
-    let randomChar = Math.floor(Math.random()*characters.length);
+    let randomChar = Math.floor(Math.random() * characters.length);
     shortURL += characters.charAt(randomChar);
   }
-  return shortURL
-};
+  return shortURL;
+}
 
 
 /**
@@ -55,22 +55,22 @@ app.get("/urls.json", (req, res) => {
 
 //List All URLs
 app.get("/urls", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     username: req.cookies.username,
     urls: urlDatabase };
-    console.log(templateVars);
-  res.render("urls_index", templateVars)
+  console.log(templateVars);
+  res.render("urls_index", templateVars);
 });
 
 //Page to Create New URL
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
-})
+});
 
 //Page to View New URL
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
-    id: req.params.shortURL, 
+  const templateVars = {
+    id: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
     username: req.cookies.username };
   res.render("urls_show", templateVars);
@@ -85,7 +85,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL
+  urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -93,13 +93,13 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
-})
+});
 
 //Route to Edit URL
 app.post("/urls/:shortURL/edit", (req, res) => {
-  const shortURL = req.params.shortURL
+  const shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`);
-})
+});
 
 //Edit / Update URL
 app.post("/urls/:shortURL/submit", (req, res) => {
@@ -110,7 +110,7 @@ app.post("/urls/:shortURL/submit", (req, res) => {
     urlDatabase[shortURL] = newURL;
   }
   res.redirect("/urls");
-})
+});
 
 //Route to longURL through the shortURL
 //Not working for updated links
@@ -123,14 +123,14 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.username;
   res.cookie('username', username);
-  res.redirect("/urls")
-})
+  res.redirect("/urls");
+});
 
 //Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie('username')
-  res.redirect("/urls")
-})
+  res.clearCookie('username');
+  res.redirect("/urls");
+});
 
 
 /**

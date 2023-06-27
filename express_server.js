@@ -62,12 +62,12 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-//Page to Create New URL
+//Create New URL
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-//Page to View New URL
+//View New URL
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     id: req.params.shortURL,
@@ -75,6 +75,11 @@ app.get("/urls/:shortURL", (req, res) => {
     username: req.cookies.username };
   res.render("urls_show", templateVars);
 });
+
+//Register Page
+app.get("/register", (req, res) => {
+  res.render("urls_register")
+})
 
 
 /**
@@ -113,7 +118,6 @@ app.post("/urls/:shortURL/submit", (req, res) => {
 });
 
 //Route to longURL through the shortURL
-//Not working for updated links
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
@@ -134,6 +138,8 @@ app.post("/logout", (req, res) => {
 
 //Register
 app.post("/register", (req, res) => {
+  const email = req.body.email
+  const password = req.body.password
   res.redirect("/urls/register")
 })
 

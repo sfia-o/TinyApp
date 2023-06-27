@@ -44,13 +44,14 @@ function generateRandomString() {
 
 //finding user by email
 function userEmailExists(email, users) {
+  let user 
 
-  for (const user in users) {
-    if (users[user].email === email) {
-      return true;
-    }
+  for (const id in users) {
+      if (users[id].email === email) {
+      user = users[id];
+      }
   }
-  return false;
+  return user;
 };
 
 
@@ -106,12 +107,14 @@ app.get("/urls/:id", (req, res) => {
 
 //Register Page
 app.get("/register", (req, res) => {
+  
 
-  res.render("register", {user: null})
+  res.render("register", { user: null })
 })
 
 //Login
 app.get("/login", (req, res) => {
+ 
   
   res.render("login", { user: null })
 })
@@ -167,13 +170,13 @@ app.post("/login", (req, res) => {
     res.status(403).send("User not found")
   } 
 
-  const user = userEmailExists(email);
+  const user = userEmailExists(email, users);
 
-  if (users[user].password !== password) {
+  if (user.password !== password) {
     res.status(403).send("Invalid Password")
   }
 
-  res.cookie('user_id', user);
+  res.cookie('user_id', user.id);
   res.redirect("/urls");
 });
 
@@ -187,7 +190,7 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   
   const email = req.body.email;
-  const password = req.body.password
+  const password = req.body.password;
   
   if (email === '' ||  password === '') {
     res.status(400).send('Invalid Input')

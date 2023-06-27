@@ -23,7 +23,7 @@ const urlDatabase = {
 };
 
 const users = {
-  userRandomID: {
+  userID: {
     id: "userRandomID",
     email: "user@example.com",
     password: "purple-monkey-dinosaur",
@@ -147,6 +147,7 @@ app.post("/logout", (req, res) => {
 //Register New User
 app.post("/register", (req, res) => {
   const userID = generateRandomString();
+  users.userID = userID;
   res.cookie('user_id', userID)
 
   console.log(userID);

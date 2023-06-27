@@ -108,21 +108,18 @@ app.get("/urls/:id", (req, res) => {
     res.status(404).send("The url you are looking for does not exist")
   }
 
-  const templateVars = { id, longURL, user };
-  res.render("urls_show", templateVars);
+  if (userID || !userID) {
+    const templateVars = { id, longURL, user };
+    res.render("urls_show", templateVars);
+  }  
 });
 
 //Register Page
 app.get("/register", (req, res) => {
   const userID = req.cookies.user_id;
-  const user = users[userID];
-
-  const templateVars = {
-    user,
-    urls: urlDatabase };
-
+  
   if (userID) {
-    res.render("urls_index", templateVars)
+    res.redirect("/urls")
   } else {
     res.render("register", { user: null })
   }
@@ -131,14 +128,9 @@ app.get("/register", (req, res) => {
 //Login
 app.get("/login", (req, res) => {
   const userID = req.cookies.user_id;
-  const user = users[userID];
-
-  const templateVars = {
-    user,
-    urls: urlDatabase };
-
+  
   if (userID) {
-    res.render("urls_index", templateVars)
+    res.redirect("/urls")
   } else {
     res.render("login", { user: null })
   }

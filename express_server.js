@@ -108,13 +108,18 @@ app.get("/urls/:id", (req, res) => {
 //Register Page
 app.get("/register", (req, res) => {
   
+  
 
   res.render("register", { user: null })
 })
 
 //Login
 app.get("/login", (req, res) => {
- 
+  const userID = req.cookies.user_id;
+
+  if (userID) {
+    res.redirect("/urls")
+  } 
   
   res.render("login", { user: null })
 })

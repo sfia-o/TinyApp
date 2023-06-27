@@ -42,6 +42,18 @@ function generateRandomString() {
   return shortURL;
 }
 
+//finding user by email
+function userEmailExists(email, users) {
+
+  for (const user in users) {
+    if (users[user].email === email) {
+      return true;
+    }
+  }
+  return false;
+
+};
+
 
 /**
  *  R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -166,8 +178,6 @@ app.post("/register", (req, res) => {
     res.status(400).send('Invalid Input')
     return;
   }
-
-
   
   res.cookie('user_id', id)
   res.redirect("/urls")

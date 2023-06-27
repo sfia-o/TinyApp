@@ -107,10 +107,13 @@ app.get("/urls/:id", (req, res) => {
 
 //Register Page
 app.get("/register", (req, res) => {
-  
-  
+  const userID = req.cookies.user_id;
 
-  res.render("register", { user: null })
+  if (userID) {
+    res.redirect("/urls")
+  } else {
+    res.render("register", { user: null })
+  }
 })
 
 //Login
@@ -119,9 +122,9 @@ app.get("/login", (req, res) => {
 
   if (userID) {
     res.redirect("/urls")
-  } 
-  
-  res.render("login", { user: null })
+  } else {
+    res.render("login", { user: null })
+  }
 })
 
 

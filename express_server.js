@@ -40,7 +40,7 @@ function generateRandomString() {
     shortURL += characters.charAt(randomChar);
   }
   return shortURL;
-}
+};
 
 //finding user by email
 function userEmailExists(email, users) {
@@ -51,7 +51,6 @@ function userEmailExists(email, users) {
     }
   }
   return false;
-
 };
 
 
@@ -168,16 +167,21 @@ app.post("/logout", (req, res) => {
 
 //Register New User
 app.post("/register", (req, res) => {
-  const id = generateRandomString();
+  
   const email = req.body.email;
   const password = req.body.password
-
-  users[id] = { id, email, password };
   
   if (email === '' ||  password === '') {
     res.status(400).send('Invalid Input')
     return;
   }
+
+  if (userEmailExists(email, users)) {
+    res.status(400).send("Email is already registered")
+  }
+
+  const id = generateRandomString();
+  users[id] = { id, email, password };
   
   res.cookie('user_id', id)
   res.redirect("/urls")

@@ -108,9 +108,9 @@ app.get("/urls/:id", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
   const id = req.params.id;
-  const longURL = urlDatabase[id]
+  const longURL = urlDatabase[id].longURL
 
-  if (!urlDatabase[id]) {
+  if (!urlDatabase[id].longURL) {
     res.status(404).send("The url you are looking for does not exist")
   }
 
@@ -157,7 +157,12 @@ app.post("/urls", (req, res) => {
 
   const longURL = req.body.longURL;
   const id = generateRandomString();
-  urlDatabase[id] = longURL;
+
+  urlDatabase[id] = {
+    longURL,
+    userID
+  }
+  
   res.redirect(`/urls/${id}`);
 });
 
@@ -186,7 +191,7 @@ app.post("/urls/:id/submit", (req, res) => {
 
 //Route to longURL through the shortURL
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].lon;
   res.redirect(longURL);
 });
 

@@ -147,11 +147,16 @@ app.post("/logout", (req, res) => {
 //Register New User
 app.post("/register", (req, res) => {
   const userID = generateRandomString();
-  users.userID = userID;
+  const email = req.body.email;
+  const password = req.body.password
+
+  users[userID] = {
+    id: userID,
+    email,
+    password
+  }
+  
   res.cookie('user_id', userID)
-
-  console.log(userID);
-
   res.redirect("/urls")
 })
 

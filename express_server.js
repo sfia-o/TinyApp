@@ -105,6 +105,7 @@ app.get("/urls/new", (req, res) => {
 
 //View New URL
 app.get("/urls/:id", (req, res) => {
+
   const userID = req.cookies.user_id;
   const user = users[userID];
   const id = req.params.id;
@@ -114,10 +115,9 @@ app.get("/urls/:id", (req, res) => {
     res.status(404).send("The url you are looking for does not exist")
   }
 
-  if (userID || !userID) {
-    const templateVars = { id, longURL, user };
-    res.render("urls_show", templateVars);
-  }  
+  const templateVars = { id, longURL, user };
+
+  res.render("urls_show", templateVars);
 });
 
 //Register Page
@@ -191,7 +191,13 @@ app.post("/urls/:id/submit", (req, res) => {
 
 //Route to longURL through the shortURL
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id].lon;
+  console.log('req', req.params.id);
+
+
+  // if (userID || !userID) {
+  //   const templateVars = { id, longURL, user };
+
+  const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 

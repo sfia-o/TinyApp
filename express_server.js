@@ -160,8 +160,20 @@ app.get("/u/:id", (req, res) => {
 
 //Login
 app.post("/login", (req, res) => {
-  const userID = users[userID];
-  res.cookie('user_id', userID);
+  const email = req.body.email;
+  const password = req.body.password;
+  
+  if (!userEmailExists(email, users)) {
+    res.status(403).send("User not found")
+  } 
+
+  const user = userEmailExists(email);
+
+  if (users[user].password !== password) {
+    res.status(403).send("Invalid Password")
+  }
+
+  res.cookie('user_id', user);
   res.redirect("/urls");
 });
 

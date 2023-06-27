@@ -86,7 +86,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Register Page
 app.get("/register", (req, res) => {
-  res.render("urls_register")
+  res.render("register")
 })
 
 

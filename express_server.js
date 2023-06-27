@@ -161,7 +161,13 @@ app.post("/register", (req, res) => {
   const password = req.body.password
 
   users[id] = { id, email, password };
-  console.log(users);
+  
+  if (email === '' ||  password === '') {
+    res.status(400).send('Invalid Input')
+    return;
+  }
+
+
   
   res.cookie('user_id', id)
   res.redirect("/urls")

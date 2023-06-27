@@ -90,12 +90,15 @@ app.get("/urls/new", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
 
-  res.render("urls_new", {user});
+  if (userID) {
+    res.render("urls_new", { user })
+  } else {
+    res.render("login", { user: null })
+  }
 });
 
 //View New URL
 app.get("/urls/:id", (req, res) => {
-
   const userID = req.cookies.user_id;
   const user = users[userID];
   const id = req.params.id;
@@ -134,6 +137,12 @@ app.get("/login", (req, res) => {
 
 //Create New URL
 app.post("/urls", (req, res) => {
+  const userID = req.cookies.user_id;
+
+  if (!userID) {
+    res.status(403).send("Access Denied: You don't have permission, please create account before proceeding")
+  }
+
   const longURL = req.body.longURL;
   const id = generateRandomString();
   urlDatabase[id] = longURL;

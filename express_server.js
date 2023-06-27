@@ -24,9 +24,9 @@ const urlDatabase = {
 
 const users = {
   userRandomID: {
-    id,
-    email,
-    password
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
   }
 }
 
@@ -144,11 +144,14 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
-//Register
+//Register New User
 app.post("/register", (req, res) => {
-  const email = req.body.email
-  const password = req.body.password
-  res.redirect("/urls/register")
+  const userID = generateRandomString();
+  res.cookie('user_id', userID)
+
+  console.log(userID);
+
+  res.redirect("/urls")
 })
 
 

@@ -104,6 +104,10 @@ app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id]
 
+  if (!urlDatabase[id]) {
+    res.status(404).send("The url you are looking for does not exist")
+  }
+
   const templateVars = { id, longURL, user };
   res.render("urls_show", templateVars);
 });
@@ -111,9 +115,14 @@ app.get("/urls/:id", (req, res) => {
 //Register Page
 app.get("/register", (req, res) => {
   const userID = req.cookies.user_id;
+  const user = users[userID];
+
+  const templateVars = {
+    user,
+    urls: urlDatabase };
 
   if (userID) {
-    res.redirect("/urls")
+    res.render("urls_index", templateVars)
   } else {
     res.render("register", { user: null })
   }
@@ -122,9 +131,14 @@ app.get("/register", (req, res) => {
 //Login
 app.get("/login", (req, res) => {
   const userID = req.cookies.user_id;
+  const user = users[userID];
+
+  const templateVars = {
+    user,
+    urls: urlDatabase };
 
   if (userID) {
-    res.redirect("/urls")
+    res.render("urls_index", templateVars)
   } else {
     res.render("login", { user: null })
   }

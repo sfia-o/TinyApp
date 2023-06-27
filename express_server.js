@@ -107,37 +107,37 @@ app.get("/register", (req, res) => {
 //Create New URL
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/${shortURL}`);
+  const id = generateRandomString();
+  urlDatabase[id] = longURL;
+  res.redirect(`/urls/${id}`);
 });
 
 //Delete URL
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
 
 //Route to Edit URL
-app.post("/urls/:shortURL/edit", (req, res) => {
-  const shortURL = req.params.shortURL;
-  res.redirect(`/urls/${shortURL}`);
+app.post("/urls/:id/edit", (req, res) => {
+  const id = req.params.id;
+  res.redirect(`/urls/${id}`);
 });
 
 //Edit / Update URL
-app.post("/urls/:shortURL/submit", (req, res) => {
+app.post("/urls/:id/submit", (req, res) => {
   const newURL = req.body.newURL;
-  const shortURL = req.params.shortURL;
+  const id = req.params.id;
   
-  if (urlDatabase[shortURL]) {
-    urlDatabase[shortURL] = newURL;
+  if (urlDatabase[id]) {
+    urlDatabase[id] = newURL;
   }
   res.redirect("/urls");
 });
 
 //Route to longURL through the shortURL
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 

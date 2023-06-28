@@ -147,15 +147,23 @@ app.get("/urls/:id", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
   const id = req.params.id;
-
+  
+  //if user is not recognized deny access
   if (!urlDatabase[id]) {
     res.status(403).send("Access Denied");
   }
+  
+  //if user is recognized render page if logged in, otherwise send log in message request
+  if (userID) {
+    const longURL = urlDatabase[id].longURL;
+    const templateVars = { id, longURL, user };
 
-  const longURL = urlDatabase[id].longURL;
-  const templateVars = { id, longURL, user };
+    res.render("urls_show", templateVars);  
 
-  res.render("urls_show", templateVars);
+  } else {
+    res.status(403).send("Please log in first");
+  }
+
 });
 
 

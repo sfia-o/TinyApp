@@ -76,7 +76,7 @@ function urlsForUser(id, urlDatabase) {
  *  R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-//route to root
+//Route to root or home
 app.get("/", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
@@ -88,6 +88,8 @@ app.get("/", (req, res) => {
   res.render("tinyapp_home", templateVars);
 });
 
+
+// Provides a JSON representation of the urlDatabase object
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -99,13 +101,18 @@ app.get("/urls.json", (req, res) => {
 
 //List All URLs
 app.get("/urls", (req, res) => {
+  //set cookie for user
   const userID = req.cookies.user_id;
-  const user = users[userID];
 
+  //declare user variable based on user database with matching cookie
+  const user = users[userID];
+  
+  // Create the templateVars object to pass variables to the template
   const templateVars = {
     user,
     urls: urlDatabase };
-
+  
+  //Condition to deny access to anyone not found on user database
   if (!userID) {
     res.status(403).send("Access Denied: You don't have permission, please create account and log in before proceeding")
   }
@@ -113,17 +120,20 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+
 //Create New URL
 app.get("/urls/new", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
 
+  //Condition to only allow logged in users to create new url, otherwise redirect to log in page
   if (userID) {
     res.render("urls_new", { user })
   } else {
     res.render("login", { user: null })
   }
 });
+
 
 //View New URL
 app.get("/urls/:id", (req, res) => {
@@ -142,10 +152,12 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
 //Register Page
 app.get("/register", (req, res) => {
   const userID = req.cookies.user_id;
   
+  //Condition to redirect logged in users to urls page 
   if (userID) {
     res.redirect("/urls")
   } else {
@@ -153,10 +165,12 @@ app.get("/register", (req, res) => {
   }
 })
 
+
 //Login
 app.get("/login", (req, res) => {
   const userID = req.cookies.user_id;
   
+  //Condition to redirect logged in users to urls page
   if (userID) {
     res.redirect("/urls")
   } else {
@@ -173,20 +187,24 @@ app.get("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   const userID = req.cookies.user_id;
 
+  //Condition to deny access to anyone not found on user database
   if (!userID) {
     res.status(403).send("Access Denied: You don't have permission, please create account before proceeding")
   }
-
+  
+  //Declare variables to store url submitted in form and another to store a randomly generated ID
   const longURL = req.body.longURL;
   const id = generateRandomString();
-
+  
+  //Assigning these new values to a new object in our database
   urlDatabase[id] = {
     longURL,
-    userID
+    userID //userID from cookie
   }
   
   res.redirect(`/urls/${id}`);
 });
+
 
 //Delete URL
 app.post("/urls/:id/delete", (req, res) => {
@@ -194,11 +212,13 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+
 //Route to Edit URL
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   res.redirect(`/urls/${id}`);
 });
+
 
 //Edit / Update URL
 app.post("/urls/:id/submit", (req, res) => {
@@ -211,30 +231,37 @@ app.post("/urls/:id/submit", (req, res) => {
   res.redirect("/urls");
 });
 
+
 //Route to longURL through the shortURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 
+
 //Login
 app.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const email = req.body.email; //email input on login form
+  const password = req.body.password; //password input on login form
   
+  //Check if user exists in database
   if (!userEmailExists(email, users)) {
     res.status(403).send("User not found")
   } 
 
+  //Declare user variable to store the found user
   const user = userEmailExists(email, users);
 
+  //Check if found users password corresponds to input password
   if (user.password !== password) {
     res.status(403).send("Invalid Password")
   }
-
+  
+  //Set cookie to corresponding userID
   res.cookie('user_id', user.id);
   res.redirect("/urls");
 });
+
 
 //Logout
 app.post("/logout", (req, res) => {
@@ -242,21 +269,25 @@ app.post("/logout", (req, res) => {
   res.redirect("/login");
 });
 
+
 //Register New User
 app.post("/register", (req, res) => {
   
-  const email = req.body.email;
+  const email = req.body.email; 
   const password = req.body.password;
   
+  //Denied registration using empty values
   if (email === '' ||  password === '') {
     res.status(400).send('Invalid Input')
     return;
   }
 
+  //Denied duplicate email registrations
   if (userEmailExists(email, users)) {
     res.status(400).send("Email is already registered")
   }
 
+  //Generate a new ID for the new user and add it to database
   const id = generateRandomString();
   users[id] = { id, email, password };
   

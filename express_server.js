@@ -60,6 +60,17 @@ function userEmailExists(email, users) {
   return user;
 };
 
+//list urls for user
+function urlsForUser(id, urlDatabase) {
+  let savedURLS = {};
+
+  for (const element in urlDatabase) {
+    if (element === id) {
+      savedURLS
+    }
+  }
+}
+
 
 /**
  *  R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -67,7 +78,14 @@ function userEmailExists(email, users) {
 
 //route to root
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const userID = req.cookies.user_id;
+  const user = users[userID];
+
+  const templateVars = {
+    user,
+    urls: urlDatabase };
+
+  res.render("tinyapp_home", templateVars);
 });
 
 app.get("/urls.json", (req, res) => {
@@ -87,6 +105,10 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     user,
     urls: urlDatabase };
+
+  if (!userID) {
+    res.status(403).send("Access Denied: You don't have permission, please create account and log in before proceeding")
+  }
   
   res.render("urls_index", templateVars);
 });
@@ -105,13 +127,13 @@ app.get("/urls/new", (req, res) => {
 
 //View New URL
 app.get("/urls/:id", (req, res) => {
-
   const userID = req.cookies.user_id;
+
   const user = users[userID];
   const id = req.params.id;
-  const longURL = urlDatabase[id].longURL
+  const longURL= urlDatabase[id].longURL;
 
-  if (!urlDatabase[id].longURL) {
+  if (!urlDatabase[id]) {
     res.status(404).send("The url you are looking for does not exist")
   }
 
@@ -183,20 +205,14 @@ app.post("/urls/:id/submit", (req, res) => {
   const newURL = req.body.newURL;
   const id = req.params.id;
   
-  if (urlDatabase[id]) {
-    urlDatabase[id] = newURL;
+  if (urlDatabase[id].longURL) {
+    urlDatabase[id].longURL = newURL;
   }
   res.redirect("/urls");
 });
 
 //Route to longURL through the shortURL
 app.get("/u/:id", (req, res) => {
-  console.log('req', req.params.id);
-
-
-  // if (userID || !userID) {
-  //   const templateVars = { id, longURL, user };
-
   const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });

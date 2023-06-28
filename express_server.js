@@ -83,7 +83,7 @@ function urlsForUser(id, urlDatabase) {
  *  R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-//Route to root or home
+//ROOT/HOME
 app.get("/", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
@@ -106,7 +106,7 @@ app.get("/urls.json", (req, res) => {
  *  R E N D E R   R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-//List All URLs
+//ALL URLS
 app.get("/urls", (req, res) => {
   //set cookie for user
   const userID = req.cookies.user_id;
@@ -121,14 +121,14 @@ app.get("/urls", (req, res) => {
   
   //Condition to deny access to anyone not found on user database
   if (!userID) {
-    res.status(403).send("Access Denied: You don't have permission, please create account and log in before proceeding");
+    res.status(403).send("Access Denied: You don't have permission, please create account and/or log in before proceeding");
   }
   
   res.render("urls_index", templateVars);
 });
 
 
-//Create New URL
+//CREATE NEW URL
 app.get("/urls/new", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
@@ -142,7 +142,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 
-//View New URL
+//VIEW URL
 app.get("/urls/:id", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
@@ -167,7 +167,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 
-//Register Page
+//REGISTER
 app.get("/register", (req, res) => {
   const userID = req.cookies.user_id;
   
@@ -180,7 +180,7 @@ app.get("/register", (req, res) => {
 });
 
 
-//Login
+//LOGIN 
 app.get("/login", (req, res) => {
   const userID = req.cookies.user_id;
   
@@ -197,13 +197,13 @@ app.get("/login", (req, res) => {
  *  A P I   R O U T E S -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-//Create New URL
+//CREATE NEW URL
 app.post("/urls", (req, res) => {
   const userID = req.cookies.user_id;
 
   //Condition to deny access to anyone not found on user database
   if (!userID) {
-    res.status(403).send("Access Denied: You don't have permission, please create account before proceeding");
+    res.status(403).send("Access Denied: You don't have permission, please create account and/or log in before proceeding");
   }
   
   //Declare variables to store url submitted in form and another to store a randomly generated ID
@@ -220,40 +220,64 @@ app.post("/urls", (req, res) => {
 });
 
 
-//Delete URL
+//DELETE URL
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
+  const userID = req.cookies.user_id;
+
+  if (!userID) {
+    res.status(401).send("Unauthorized")
+  }
+
+  if (userID) {
+
+    if (!urlDatabase[req.params.id]) {
+      res.status(404).send("Unable to delete unexisting content")
+    }
+
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
+    }
+
+  res.status(401).send("Please log in")
+
 });
 
 
-//Route to Edit URL
+//EDIT URL
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   res.redirect(`/urls/${id}`);
 });
 
 
-//Edit / Update URL
+//SUBMIT EDIT URL
 app.post("/urls/:id/submit", (req, res) => {
-  const newURL = req.body.newURL;
-  const id = req.params.id;
-  
-  if (urlDatabase[id].longURL) {
-    urlDatabase[id].longURL = newURL;
+  const userID = req.cookies.user_id;
+
+  if (!userID) {
+    res.status(401).send("Unauthorized")
+  }
+
+  if (userID) {
+    const newURL = req.body.newURL;
+    const id = req.params.id;
+    
+    if (urlDatabase[id].longURL) {
+      urlDatabase[id].longURL = newURL;
+    }
   }
   res.redirect("/urls");
 });
 
 
-//Route to longURL through the shortURL
+//ROUTE TO LONGURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 
 
-//Login
+//LOGIN ------
 app.post("/login", (req, res) => {
   const email = req.body.email; //email input on login form
   const password = req.body.password; //password input on login form
@@ -277,14 +301,14 @@ app.post("/login", (req, res) => {
 });
 
 
-//Logout
+//LOGOUT ------
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   res.redirect("/login");
 });
 
 
-//Register New User
+//REGISTER ------
 app.post("/register", (req, res) => {
   
   const email = req.body.email;

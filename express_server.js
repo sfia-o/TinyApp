@@ -145,15 +145,14 @@ app.get("/urls/new", (req, res) => {
 //View New URL
 app.get("/urls/:id", (req, res) => {
   const userID = req.cookies.user_id;
-
   const user = users[userID];
   const id = req.params.id;
-  const longURL = urlDatabase[id].longURL;
 
   if (!urlDatabase[id]) {
-    res.status(404).send("The url you are looking for does not exist");
+    res.status(403).send("Access Denied");
   }
 
+  const longURL = urlDatabase[id].longURL;
   const templateVars = { id, longURL, user };
 
   res.render("urls_show", templateVars);

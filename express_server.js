@@ -62,13 +62,20 @@ function userEmailExists(email, users) {
 
 //list urls for user
 function urlsForUser(id, urlDatabase) {
+  //Declare new object
   let savedURLS = {};
+  
+  //Loop through database
+  for (const url in urlDatabase) {
 
-  for (const element in urlDatabase) {
-    if (element === id) {
-      savedURLS;
+    //check if id matches userID
+    if (urlDatabase[url].userID === id) {
+
+      //keep that as a savedURLS
+      savedURLS[url] = urlDatabase[url]
     }
   }
+  return savedURLS;
 }
 
 
@@ -110,7 +117,7 @@ app.get("/urls", (req, res) => {
   // Create the templateVars object to pass variables to the template
   const templateVars = {
     user,
-    urls: urlDatabase };
+    urls: urlsForUser(userID, urlDatabase) }; //filtering user saved urls using callback
   
   //Condition to deny access to anyone not found on user database
   if (!userID) {

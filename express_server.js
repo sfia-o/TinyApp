@@ -24,15 +24,20 @@ const urlDatabase = {
   },
   "i3BoGr": {
     longURL: "https://www.google.ca",
-    userID: "aJ48lW",
+    userID: "aJ48lu",
   },
 };
 
 const users = {
-  userID: {
-    id: "userRandomID",
+  aJ48lW: {
+    id: "aJ48lW",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: "purple",
+  },
+  aJ48lu: {
+    id: "aJ48lu",
+    email: "use@example.com",
+    password: "purple",
   }
 };
 
@@ -223,23 +228,30 @@ app.post("/urls", (req, res) => {
 //DELETE URL
 app.post("/urls/:id/delete", (req, res) => {
   const userID = req.cookies.user_id;
+  const urlID = req.params.id;
 
   if (!userID) {
     res.status(401).send("Unauthorized")
+    return;
   }
 
-  if (userID) {
+  if (!users[userID]) {
+    res.status(401).send("Please log in")
+    return;
+  }
+  
+  if (!urlDatabase[urlID]) {
+    res.status(404).send("URL does not exist")
+    return;
+  }
+  
+  if (urlDatabase[urlID].userID !== userID) {
+    res.status(403).send("Unauthorized")
+    return;
+  }
 
-    if (!urlDatabase[req.params.id]) {
-      res.status(404).send("Unable to delete unexisting content")
-    }
-
-    delete urlDatabase[req.params.id];
-    res.redirect("/urls");
-    }
-
-  res.status(401).send("Please log in")
-
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
 });
 
 
@@ -251,21 +263,22 @@ app.post("/urls/:id/edit", (req, res) => {
 
 
 //SUBMIT EDIT URL
-app.post("/urls/:id/submit", (req, res) => {
+app.post("/urls/:id", (req, res) => {
   const userID = req.cookies.user_id;
 
   if (!userID) {
     res.status(401).send("Unauthorized")
+    return;
   }
 
-  if (userID) {
-    const newURL = req.body.newURL;
-    const id = req.params.id;
+  // POST /urls/:id should return a relevant error message if id does not exist
+  // POST /urls/:id should return a relevant error message if the user does not own the URL
+
+  const newURL = req.body.newURL;
+  const id = req.params.id;
     
-    if (urlDatabase[id].longURL) {
-      urlDatabase[id].longURL = newURL;
-    }
-  }
+  urlDatabase[id].longURL = newURL;
+  
   res.redirect("/urls");
 });
 

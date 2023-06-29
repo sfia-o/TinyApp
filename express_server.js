@@ -3,7 +3,7 @@
  */
 
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 
 
@@ -21,7 +21,11 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secret-keys'],
+  maxAge: 24 * 60 * 60 * 1000 // 24hours
+}))
 
 
 /**
@@ -101,7 +105,7 @@ function urlsForUser(id, urlDatabase) {
 
 //ROOT/HOME
 app.get("/", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const user = users[userID];
 
   const templateVars = {
@@ -125,7 +129,7 @@ app.get("/urls.json", (req, res) => {
 //ALL URLS
 app.get("/urls", (req, res) => {
   //set cookie for user
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
 
   //declare user variable based on user database with matching cookie
   const user = users[userID];
@@ -146,7 +150,7 @@ app.get("/urls", (req, res) => {
 
 //CREATE NEW URL
 app.get("/urls/new", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const user = users[userID];
 
   //Condition to only allow logged in users to create new url, otherwise redirect to log in page
@@ -160,7 +164,7 @@ app.get("/urls/new", (req, res) => {
 
 //VIEW URL
 app.get("/urls/:id", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const user = users[userID];
   const id = req.params.id;
   
@@ -185,7 +189,7 @@ app.get("/urls/:id", (req, res) => {
 
 //REGISTER
 app.get("/register", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   
   //Condition to redirect logged in users to urls page
   if (userID) {
@@ -198,7 +202,7 @@ app.get("/register", (req, res) => {
 
 //LOGIN 
 app.get("/login", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   
   //Condition to redirect logged in users to urls page
   if (userID) {
@@ -215,7 +219,7 @@ app.get("/login", (req, res) => {
 
 //CREATE NEW URL
 app.post("/urls", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
 
   //Condition to deny access to anyone not found on user database
   if (!userID) {
@@ -238,7 +242,7 @@ app.post("/urls", (req, res) => {
 
 //DELETE URL
 app.post("/urls/:id/delete", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const urlID = req.params.id;
 
   if (!userID) {
@@ -275,7 +279,7 @@ app.post("/urls/:id/edit", (req, res) => {
 
 //SUBMIT EDIT URL
 app.post("/urls/:id", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const urlID = req.params.id;
 
   if (!userID) {
@@ -331,21 +335,22 @@ app.post("/login", (req, res) => {
   }
   
   //Set cookie to corresponding userID
-  res.cookie('user_id', user.id);
+  req.session.user_id = user.id;
+  console.log(req.session.user_id);
   res.redirect("/urls");
 });
 
 
 //LOGOUT ------
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  //clear cookie and redirect to login 
+  req.session = null;
   res.redirect("/login");
 });
 
 
 //REGISTER ------
 app.post("/register", (req, res) => {
-  
   const email = req.body.email;
   const password = req.body.password;
   
@@ -354,6 +359,7 @@ app.post("/register", (req, res) => {
     res.status(400).send('Invalid Input');
     return;
   }
+
   //Denied duplicate email registrations
   if (userEmailExists(email, users)) {
     res.status(400).send("Email is already registered");
@@ -370,7 +376,7 @@ app.post("/register", (req, res) => {
   //Create new user object
   users[id] = { id, email, password: hashedPassword };
   
-  res.cookie('user_id', id);
+  req.session.user_id = id;
   res.redirect("/urls");
 });
 

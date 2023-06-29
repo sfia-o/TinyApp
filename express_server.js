@@ -123,24 +123,36 @@ app.get("/urls/new", (req, res) => {
 //VIEW URL
 app.get("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
-  const user = users[userID];
   const id = req.params.id;
+  const user = users[userID]
   
-  //if user is not recognized deny access
+  //check if user exists
+  if (!userID) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+  
+  //check if url exists
   if (!urlDatabase[id]) {
-    res.status(403).send("Access Denied");
+    res.status(404).send("URL does not exist");
+    return;
+  }
+ 
+  //check url belongs to user
+  if (urlDatabase[id].userID !== userID) {
+    res.status(403).send("Unauthorized");
+    return;
   }
   
-  //if user is recognized render page if logged in, otherwise send log in message request
-  if (userID) {
-    const longURL = urlDatabase[id].longURL;
-    const templateVars = { id, longURL, user };
+  //passed all checks - happy path
 
-    res.render("urls_show", templateVars);
-
-  } else {
-    res.status(403).send("Please log in first");
+  templateVars = {
+    user,
+    id,
+    longURL: urlDatabase[id].longURL
   }
+  
+  res.render("urls_show", templateVars);
 
 });
 
@@ -256,7 +268,7 @@ app.post("/urls/:id", (req, res) => {
     res.status(404).send("URL does not exist");
     return;
   }
-  
+
   //check url belongs to user
   if (urlDatabase[id].userID !== userID) {
     res.status(403).send("Unauthorized");

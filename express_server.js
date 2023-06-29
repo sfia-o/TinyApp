@@ -265,19 +265,25 @@ app.post("/urls/:id/edit", (req, res) => {
 //SUBMIT EDIT URL
 app.post("/urls/:id", (req, res) => {
   const userID = req.cookies.user_id;
+  const urlID = req.params.id;
 
   if (!userID) {
     res.status(401).send("Unauthorized")
     return;
   }
 
-  // POST /urls/:id should return a relevant error message if id does not exist
-  // POST /urls/:id should return a relevant error message if the user does not own the URL
+  if (!urlDatabase[urlID]) {
+    res.status(404).send("URL does not exist")
+    return;
+  }
 
-  const newURL = req.body.newURL;
-  const id = req.params.id;
-    
-  urlDatabase[id].longURL = newURL;
+  if (urlDatabase[urlID].userID !== userID) {
+    res.status(403).send("Unauthorized")
+    return;
+  }
+
+  const newURL = req.body.newURL;   
+  urlDatabase[urlID].longURL = newURL;
   
   res.redirect("/urls");
 });
@@ -298,6 +304,7 @@ app.post("/login", (req, res) => {
   //Check if user exists in database
   if (!userEmailExists(email, users)) {
     res.status(403).send("User not found");
+    return;
   }
 
   //Declare user variable to store the found user
@@ -306,6 +313,7 @@ app.post("/login", (req, res) => {
   //Check if found users password corresponds to input password
   if (user.password !== password) {
     res.status(403).send("Invalid Password");
+    return;
   }
   
   //Set cookie to corresponding userID
@@ -336,6 +344,7 @@ app.post("/register", (req, res) => {
   //Denied duplicate email registrations
   if (userEmailExists(email, users)) {
     res.status(400).send("Email is already registered");
+    return;
   }
 
   //Generate a new ID for the new user and add it to database

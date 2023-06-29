@@ -1,8 +1,19 @@
+/***
+ * R E Q U I R E
+ */
+
 const express = require("express");
 const cookieParser = require('cookie-parser');
-const app = express();
-const PORT = 8080;
+const bcrypt = require("bcryptjs");
 
+
+/**
+ *  C O N F I G
+ */
+
+const SALT = 10;
+const PORT = 8080;
+const app = express();
 
 /**
  *  M I D D L E W A R E-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -311,7 +322,10 @@ app.post("/login", (req, res) => {
   const user = userEmailExists(email, users);
 
   //Check if found users password corresponds to input password
-  if (user.password !== password) {
+
+  const isMatch = bcrypt.compareSync(password, user.password);
+
+  if (!isMatch) {
     res.status(403).send("Invalid Password");
     return;
   }
@@ -334,6 +348,7 @@ app.post("/register", (req, res) => {
   
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, SALT)
   
   //Denied registration using empty values
   if (email === '' ||  password === '') {

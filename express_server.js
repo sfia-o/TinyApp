@@ -5,7 +5,7 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
-const { generateRandomString, userEmailExists, urlsForUser } = require("./helperFunctions.js")
+const { generateRandomString, userEmailExists, urlsForUser } = require("./helperFunctions.js");
 
 
 /**
@@ -26,7 +26,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['secret-keys'],
   maxAge: 24 * 60 * 60 * 1000 // 24hours
-}))
+}));
 
 
 /**
@@ -136,7 +136,7 @@ app.get("/urls/:id", (req, res) => {
     const longURL = urlDatabase[id].longURL;
     const templateVars = { id, longURL, user };
 
-    res.render("urls_show", templateVars);  
+    res.render("urls_show", templateVars);
 
   } else {
     res.status(403).send("Please log in first");
@@ -158,7 +158,7 @@ app.get("/register", (req, res) => {
 });
 
 
-//LOGIN 
+//LOGIN
 app.get("/login", (req, res) => {
   const userID = req.session.user_id;
   
@@ -205,25 +205,25 @@ app.post("/urls/:id/delete", (req, res) => {
   
   //check user exists
   if (!userID) {
-    res.status(401).send("Unauthorized")
+    res.status(401).send("Unauthorized");
     return;
   }
   
   //check user is not logged in
   if (!users[userID]) {
-    res.status(401).send("Please log in")
+    res.status(401).send("Please log in");
     return;
   }
   
   //check url exists
   if (!urlDatabase[id]) {
-    res.status(404).send("URL does not exist")
+    res.status(404).send("URL does not exist");
     return;
   }
   
   //check url belongs to logged in user
   if (urlDatabase[id].userID !== userID) {
-    res.status(403).send("Unauthorized")
+    res.status(403).send("Unauthorized");
     return;
   }
 
@@ -247,24 +247,24 @@ app.post("/urls/:id", (req, res) => {
   
   //check if user exists
   if (!userID) {
-    res.status(401).send("Unauthorized")
+    res.status(401).send("Unauthorized");
     return;
   }
   
   //check if url exists
   if (!urlDatabase[id]) {
-    res.status(404).send("URL does not exist")
+    res.status(404).send("URL does not exist");
     return;
   }
   
   //check url belongs to user
   if (urlDatabase[id].userID !== userID) {
-    res.status(403).send("Unauthorized")
+    res.status(403).send("Unauthorized");
     return;
   }
   
   //passed all checks - happy path
-  const newURL = req.body.newURL;   
+  const newURL = req.body.newURL;
   urlDatabase[id].longURL = newURL;
   
   res.redirect("/urls");
@@ -276,7 +276,7 @@ app.get("/u/:id", (req, res) => {
   
   //check if id exists
   if (!urlDatabase[req.params.id]) {
-    res.status(404).send("Page Not Found")
+    res.status(404).send("Page Not Found");
   }
   
   const longURL = urlDatabase[req.params.id].longURL;
@@ -308,15 +308,13 @@ app.post("/login", (req, res) => {
   
   //Set cookie to corresponding userID
   req.session.user_id = user.id;
-  
-  console.log(req.session.user_id);
   res.redirect("/urls");
 });
 
 
 //LOGOUT ------
 app.post("/logout", (req, res) => {
-  //clear cookie and redirect to login 
+  //clear cookie and redirect to login
   req.session = null;
   res.redirect("/login");
 });
@@ -344,7 +342,7 @@ app.post("/register", (req, res) => {
 
   //encrypting password
   const salt = bcrypt.genSaltSync(SALT);
-  const hashedPassword = bcrypt.hashSync(password, salt)
+  const hashedPassword = bcrypt.hashSync(password, salt);
   
   //Create new user object
   users[id] = { id, email, password: hashedPassword };

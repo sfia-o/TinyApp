@@ -38,14 +38,14 @@ function urlsForUser(id, urlDatabase) {
     if (urlDatabase[url].userID === id) {
 
       //keep that as a savedURLS
-      savedURLS[url] = urlDatabase[url]
+      savedURLS[url] = urlDatabase[url];
     }
   }
   return savedURLS;
 }
 
-module.exports = { 
-  generateRandomString, 
-  userEmailExists, 
-  urlsForUser 
+module.exports = {
+  generateRandomString,
+  userEmailExists,
+  urlsForUser
 };

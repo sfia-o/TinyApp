@@ -348,23 +348,27 @@ app.post("/register", (req, res) => {
   
   const email = req.body.email;
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, SALT)
   
   //Denied registration using empty values
   if (email === '' ||  password === '') {
     res.status(400).send('Invalid Input');
     return;
   }
-
   //Denied duplicate email registrations
   if (userEmailExists(email, users)) {
     res.status(400).send("Email is already registered");
     return;
   }
-
-  //Generate a new ID for the new user and add it to database
+  
+  //create random id
   const id = generateRandomString();
-  users[id] = { id, email, password };
+
+  //encrypting password
+  const salt = bcrypt.genSaltSync(SALT);
+  const hashedPassword = bcrypt.hashSync(password, salt)
+  
+  //Create new user object
+  users[id] = { id, email, password: hashedPassword };
   
   res.cookie('user_id', id);
   res.redirect("/urls");

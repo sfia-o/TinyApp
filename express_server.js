@@ -264,6 +264,11 @@ app.post("/urls/:id", (req, res) => {
 
 //ROUTE TO LONGURL
 app.get("/u/:id", (req, res) => {
+  
+  if (!urlDatabase[req.params.id]) {
+    res.status(404).send("Page Not Found")
+  }
+  
   const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });

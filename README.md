@@ -5,9 +5,9 @@ This project was completed as part of the Lighthouse Labs Bootcamp in June 2023,
 
 ## Final Product
 
-!["register page"](https://github.com/sfia-o/TinyApp/blob/master/register.png)
-!["listURLS with delete selection"](https://github.com/sfia-o/TinyApp/blob/master/urls.png)
-!["showURL"](https://github.com/sfia-o/TinyApp/blob/master/urlshow.png)
+!["register page"](https://github.com/sfia-o/TinyApp/blob/master/screenshots/register.png)
+!["listURLS with delete selection"](https://github.com/sfia-o/TinyApp/blob/master/screenshots/urls.png)
+!["showURL"](https://github.com/sfia-o/TinyApp/blob/master/screenshots/urlshow.png)
 
 
 ## Dependencies

@@ -201,7 +201,7 @@ app.post("/urls", (req, res) => {
 //DELETE URL
 app.post("/urls/:id/delete", (req, res) => {
   const userID = req.session.user_id;
-  const urlID = req.params.id;
+  const id = req.params.id;
 
   if (!userID) {
     res.status(401).send("Unauthorized")
@@ -213,12 +213,12 @@ app.post("/urls/:id/delete", (req, res) => {
     return;
   }
   
-  if (!urlDatabase[urlID]) {
+  if (!urlDatabase[id]) {
     res.status(404).send("URL does not exist")
     return;
   }
   
-  if (urlDatabase[urlID].userID !== userID) {
+  if (urlDatabase[id].userID !== userID) {
     res.status(403).send("Unauthorized")
     return;
   }
@@ -238,25 +238,25 @@ app.post("/urls/:id/edit", (req, res) => {
 //SUBMIT EDIT URL
 app.post("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
-  const urlID = req.params.id;
+  const id = req.params.id;
 
   if (!userID) {
     res.status(401).send("Unauthorized")
     return;
   }
 
-  if (!urlDatabase[urlID]) {
+  if (!urlDatabase[id]) {
     res.status(404).send("URL does not exist")
     return;
   }
 
-  if (urlDatabase[urlID].userID !== userID) {
+  if (urlDatabase[id].userID !== userID) {
     res.status(403).send("Unauthorized")
     return;
   }
 
   const newURL = req.body.newURL;   
-  urlDatabase[urlID].longURL = newURL;
+  urlDatabase[id].longURL = newURL;
   
   res.redirect("/urls");
 });

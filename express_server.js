@@ -202,27 +202,32 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const userID = req.session.user_id;
   const id = req.params.id;
-
+  
+  //check user exists
   if (!userID) {
     res.status(401).send("Unauthorized")
     return;
   }
-
+  
+  //check user is not logged in
   if (!users[userID]) {
     res.status(401).send("Please log in")
     return;
   }
   
+  //check url exists
   if (!urlDatabase[id]) {
     res.status(404).send("URL does not exist")
     return;
   }
   
+  //check url belongs to logged in user
   if (urlDatabase[id].userID !== userID) {
     res.status(403).send("Unauthorized")
     return;
   }
 
+  //passed all checks - happy path
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
@@ -239,22 +244,26 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const id = req.params.id;
-
+  
+  //check if user exists
   if (!userID) {
     res.status(401).send("Unauthorized")
     return;
   }
-
+  
+  //check if url exists
   if (!urlDatabase[id]) {
     res.status(404).send("URL does not exist")
     return;
   }
-
+  
+  //check url belongs to user
   if (urlDatabase[id].userID !== userID) {
     res.status(403).send("Unauthorized")
     return;
   }
-
+  
+  //passed all checks - happy path
   const newURL = req.body.newURL;   
   urlDatabase[id].longURL = newURL;
   
@@ -265,6 +274,7 @@ app.post("/urls/:id", (req, res) => {
 //ROUTE TO LONGURL
 app.get("/u/:id", (req, res) => {
   
+  //check if id exists
   if (!urlDatabase[req.params.id]) {
     res.status(404).send("Page Not Found")
   }
@@ -289,7 +299,6 @@ app.post("/login", (req, res) => {
   const user = userEmailExists(email, users);
 
   //Check if found users password corresponds to input password
-
   const isMatch = bcrypt.compareSync(password, user.password);
 
   if (!isMatch) {
@@ -299,6 +308,7 @@ app.post("/login", (req, res) => {
   
   //Set cookie to corresponding userID
   req.session.user_id = user.id;
+  
   console.log(req.session.user_id);
   res.redirect("/urls");
 });

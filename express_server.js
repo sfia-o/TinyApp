@@ -64,13 +64,10 @@ const users = {
 //ROOT/HOME
 app.get("/", (req, res) => {
   const userID = req.session.user_id;
-  const user = users[userID];
-
-  const templateVars = {
-    user,
-    urls: urlDatabase };
-
-  res.render("tinyapp_home", templateVars);
+  if (!userID) {
+    res.redirect("/login")
+  }
+    res.redirect("/urls");
 });
 
 
